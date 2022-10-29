@@ -1,7 +1,9 @@
 //入力データを保管するために、変数resultを設定。初期値をnullとする。
 let result = "";
-//直前の入力が＝であるかを判別するために設定。数字キー押下時の分岐条件として用いる。初期値をflaseとする。
+//直前の入力が＝であるかを判別するためのフラグ。数字・小数点・０キー押下時の分岐条件として用いる。初期値をflaseとする。
 let is_calc = false;
+//小数点をデータに追加可能か判別するためのフラグ。trueなら追加可能。小数点キーの押下時の分岐条件として用いる。
+let point = true;
 //DOMのレンダリング完了後、変数result、にid="result"を含むドキュメント要素（以後頻繁に使う）を代入する。
 //以後は後者と同意味の前者を使用し、コードを見やすくしている。
 window.onload = function () {
@@ -11,6 +13,7 @@ window.onload = function () {
 //cキー押下時の処理
 function c_click() {
   is_calc = false;
+  point = true;
   result.value = "0";
 }
 
@@ -18,25 +21,53 @@ function c_click() {
 function num_click(val) {
   
   //直前の入力が=であるとき、前データを消去し、"0"を新たなデータとする。
-  if(is_calc) result.value = "0"
-  is_calc = false;
+  if(is_calc){
+    result.value = val;
+    is_calc = false;
+  }
   
-  // 先頭につく0は１つのみにする
-  if(result.value == "0" && val == "0"){
-    result.value = result.value;
-  }
-  //"."はデータ中に１つのみとする
-  else if(result.value.includes(".") && val == "."){
-    result.value = result.value;
-  }
-  //前データが"0" かつ直後の入力値が"." の時のみ 前データ("0")を保管。それに入力値（"."）を加えたものを新たなデータとする
-  else if(result.value == "0" && val == "."){
-    result.value = result.value + val;
-  }
-  //（上以外で）前データが"0"の時、前データを消去し、入力値を新たなデータとする
+  //上でない、かつ、前データが"0"の時、前データを消去し、入力値を新たなデータとする
   else if(result.value == "0"){
     result.value = val;
   }
+  
+  //以上以外の時、前データを保管。それに入力値を加えたものを新たなデータとする
+  else {
+    result.value = result.value + val;
+  }
+}
+
+//小数点キー押下時の処理
+function point_click(val) {
+  if(is_calc) result.value = "0"
+  is_calc = false;
+  
+  //"演算子."という形を禁止
+  if(["+", "-", "×", "÷"].includes(result.value.slice(-1))){
+    result.value = result.value + "0"
+  }
+  //小数点フラグが立っているときのみ、新たなデータ = 全データ + ".";とする。
+  if(point) {
+    result.value = result.value + val;
+    point = false;
+  }
+}
+
+//0キー押下時の処理
+function zero_click(val) {
+  if (is_calc) result.value = "0";
+  is_calc = false;
+  
+  //"演算子00"という形を禁止。例えば"+00"など
+  if (result.value.slice(-1) == "0" && ["+", "-", "×", "÷"].includes(result.value.slice(-2,-1)) ){
+    result.value = result.value;
+  }
+  
+  //"00"という形を禁止。"0"の連続を禁止しているわけでない。例えば"100"などは条件を満たさない。
+  else if(result.value == "0") {
+    result.value = result.value;
+  }
+  
   //以上以外の時、前データを保管。それに入力値を加えたものを新たなデータとする
   else {
     result.value = result.value + val;
@@ -52,8 +83,9 @@ function is_ope_last() {
 //演算子キー押下時の処理
 function ope_click(val) {
   is_calc = false;
+  point = true;
   
-  //データに演算子が連続することを防ぐ
+  //データに演算子が連続することを禁止
   if(is_ope_last()){
     result.value = result.value.slice(0, -1) + val;
   }
@@ -74,6 +106,7 @@ function equal_click() {
   else {
     result.value = temp;
     is_calc = true;
+    point = true;
   }
 }
 
