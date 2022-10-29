@@ -10,8 +10,8 @@ window.onload = function () {
 
 //cキー押下時の処理
 function c_click() {
-  result.value = "0";
   is_calc = false;
+  result.value = "0";
 }
 
 //数字キー押下時の処理。引数valにはhtmlで設定した値が代入される（今回は this.innerHTML　のみ）。
@@ -28,11 +28,10 @@ function num_click(val) {
     result.value = result.value;
   }
   //前データが"0" かつ直後の入力値が"." の時のみ 前データ("0")を保管。それに入力値（"."）を加えたものを新たなデータとする
-
   else if(result.value == "0" && val == "."){
     result.value = result.value + val;
   }
-  //（上以外で）前データが"0"の時、前データを消去し、入力値を新たなデータ
+  //（上以外で）前データが"0"の時、前データを消去し、入力値を新たなデータとする
   else if(result.value == "0"){
     result.value = val;
   }
@@ -44,4 +43,23 @@ function num_click(val) {
     
 }
 
+//データの末尾が演算子か判別するために設定。演算子キー押下の処理の時に用いる。
+function is_ope_last() {
+  return ["+", "-", "×", "÷"].includes(result.value.toString().slice(-1)); ///toStringが不要な気がするのであとで消去して問題ないか調べて
+}
+
+
 //演算子キー押下時の処理
+function ope_click(val) {
+  if(is_calc) is_calc = false; //if文つける必要ないと思う。is_calc = falseだけでいけると思うから後で修正
+  
+  //データに演算子が連続することを防ぐ
+  if(is_ope_last()){
+    result.value = result.value.slice(0, -1) + val;
+  }
+  else {
+    result.value = result.value + val;
+  }
+  
+}
+
