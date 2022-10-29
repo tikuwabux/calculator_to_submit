@@ -1,0 +1,31 @@
+.wrapper {
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+#header, #calc {
+  text-align: center;
+}
+
+
+input, button {
+  padding:20px;
+  font-size:25px;
+}
+
+
+input {
+  text-align: right;
+  box-sizing: border-box;
+  width: 75%;
+  
+}
+
+button {
+  box-sizing: border-box;
+  width: 25%;
+}
+
+button:hover {
+  background-color: grey;
+}
