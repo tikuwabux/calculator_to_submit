@@ -104,7 +104,7 @@ function equal_click() {
     result.value = "Error";
   }
   else {
-    result.value = temp;
+    result.value = temp;　//resultはtype="text"のinput属性であるため、tempを代入しても、その後"temp"に自動変換され、result.value == "temp"となる。
     is_calc = true;
     point = true;
   }
