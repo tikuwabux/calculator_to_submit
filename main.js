@@ -43,7 +43,7 @@ function num_click(val) {
     
 }
 
-//データの末尾が演算子か判別するために設定。演算子キー押下の処理の時に用いる。
+//データの末尾が演算子か判別するために設定。演算子キー、＝キー押下の処理の時に用いる。
 function is_ope_last() {
   return ["+", "-", "×", "÷"].includes(result.value.toString().slice(-1)); ///toStringが不要な気がするのであとで消去して問題ないか調べて
 }
@@ -59,6 +59,22 @@ function ope_click(val) {
   }
   else {
     result.value = result.value + val;
+  }
+  
+}
+
+//=キー押下時の時の処理
+function equal_click() {
+  //データ末尾の演算子を削除
+  if(is_ope_last()) result.value = result.value.slice(0, -1);
+  
+  let temp = new Function("return " + result.value.replaceAll("×", "*").replaceAll("÷", "/"))();
+  if(temp == Infinity || Number.isNaN(temp)){
+    result.value = "Error";
+  }
+  else {
+    result.value = temp;
+    is_calc = true;
   }
   
 }
